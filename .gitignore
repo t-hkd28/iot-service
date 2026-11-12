@@ -1,0 +1,31 @@
+# === Maven ===
+target/
+*.releaseBackup
+release.properties
+pom.xml.tag
+pom.xml.next
+pom.xml.releaseBackup
+
+# === Eclipse ===
+.metadata/
+.recommenders/
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~
+.factorypath
+
+# MavenプロジェクトとしてインポートするためEclipse固有の構成ファイルも除外
+.project
+.classpath
+.settings/
+
+# === OS / Logs ===
+*.log
+hs_err_pid*
+.DS_Store
+Thumbs.db
+
+/sensor-data.csv
