@@ -1,65 +1,55 @@
 # 準備用ブランチ・Issue・Milestone運用
 
-## マージ時期
+> **作業名の確認：** [タスク早見表](../タスク早見表.md)（D0・B1・A1などの記号と担当機能の対応）
+
+## 作成とマージの順序
 
 ```mermaid
 flowchart LR
- M[master 現行開発中] --> V[master 現行結合試験合格]
- M --> DOC[docs/extension-planning 設計準備]
- V --> TAG[v1.0タグ付け]
- TAG --> CHECK[設計資料をv1.0コードに照合]
- DOC --> CHECK
- CHECK --> PR[文書専用PRをmasterへマージ]
- PR --> D0[D0実装用ブランチ作成]
+ M["master：現行開発"] --> T["現行結合試験・v1.0タグ"]
+ M --> D["docs/extension-planning：追加設計準備"]
+ T --> CHECK["v1.0と設計書を照合"]
+ D --> CHECK
+ CHECK --> PR["準備資料のPRをmasterへマージ"]
+ PR --> EXT["最新masterから追加実装ブランチ"]
 ```
 
-1. 教員が`master`から`docs/extension-planning`を作成し、`docs/extensions/`のみ編集。
+1. 教員が`docs/extension-planning`で`docs/extensions/`の設計書・Issue原稿・テスト仕様を作る。
 2. 必要ならDraft PRを作り、現行開発中は**マージしない**。
-3. 現行版の結合試験に合格して`master`に`v1.0`タグを付ける。
-4. 準備ブランチへ最新`master`を取り込み、ソースと資料の差を確認する。
-5. 文書専用PRをマージし、準備ブランチを削除する。
-6. 最新`master`から`feature/d0-oracle-only`等を作成し、通常のIssue単位のPRで実装する。
+3. 現行版の結合試験に合格し、`master`へ`v1.0`タグを作成する。
+4. 準備ブランチに最新`master`を取り込んで設計の差分を見直す。
+5. 設計資料だけPRマージした後、必要なTaskの実装ブランチを作る。
 
-**注意**：準備ブランチを`master`へマージしない限り設計書は`v1.0`タグに含まれない。資料の更新が多い場合はDraft PRで差分を見える化する。
+## Project
 
-## GitHub Project
+現行開発と混ざらないよう`Extension Backlog`ビューを用意。`Estimate (h)`はNumber型のユーザー作成フィールド。ラベルは`enhancement`、`area:search`、`area:graph`、`area:device`、`area:infra`。未実施のTaskは原稿またはDraft Issueとして保存する。
 
-- `Extension Backlog`ビューを設け、現行版のBoardと混在させない。
-- Issueの`Status`（Todo / In Progress / Review / Done）、`Assignees`、`Estimate (h)`を使用。
-- ラベル：`enhancement`、`area:search`、`area:graph`、`area:device`、`area:infra`。
-- 現行開発中はDraft IssueかMarkdownのIssue原稿を用意。**IssueのGitHub番号は実際に登録してから確定**する。原稿ではD0、B1～B4などのTask IDで参照する。
+## Milestone（完成段階を管理する）
 
-## Milestoneとは
-
-リポジトリ単位で複数のIssue／PRを**目標としてまとめる**GitHubの機能。Projectの状態管理とは別物。完了率はIssue／PRのクローズ数を示すもので、機能の実動作を証明しない。
-
-| 推奨Milestone | 含めるTask | 完了条件 |
+| Milestone | 対応Task | 完成ゲート |
 |---|---|---|
-| E0 Oracle専用化 | D0 | Oracle環境で既存機能の回帰試験合格 |
-| E1 センサー種別検索 | B1 | API＋画面＋テスト完了 |
-| E2 センサーID検索 | B2 | 単独検索・種別とのAND完了 |
-| E3 基本折れ線グラフ | A1 | 1系列グラフが使える |
-| E4 グラフ絞り込み | A2、A3 | 種別／ID切替を実装・確認 |
-| E5 高度検索 | B3、B4 | 日時・複合条件の検索と画面 |
-| E6 表示改善 | A4 | 表・グラフの切替と回帰確認 |
-| E7 デバイス登録・一覧 | C1 | 位置マスタ＋DB＋API＋画面が動作 |
-| E8 デバイス詳細 | C2 | 詳細表示が動作 |
-| E9 デバイス編集 | C3 | 更新が動作 |
-| E10 デバイス削除 | C4 | 削除が動作 |
-| E11 センサー関連付け | C5 | 関連付け・測定値参照が動作 |
+| Oracle専用化 | Oracle専用化（D0） | Oracleで既存機能の回帰試験に合格 |
+| 種別検索 | センサー種別検索（B1） | API・画面・テスト合格 |
+| 期間検索 | 測定日時範囲検索（B2） | 期間単独・種別とのAND合格 |
+| 基本グラフ | 基本折れ線グラフ（A1） | 折れ線表示・0件対応 |
+| 種別切替 | グラフ種別切替（A2） | 種別選択でAPI再取得・表示更新 |
+| グラフ期間指定 | グラフの測定期間指定（A3） | 開始／終了指定をグラフへ反映 |
+| 表示改善 | 表とグラフの表示改善（A4） | 表とグラフの整合確認 |
+| デバイス登録・一覧 | 設置場所マスタ・デバイス登録／一覧（C1） | 場所選択・登録・一覧が動く |
+| デバイス詳細 | デバイス詳細表示（C2） | 詳細取得が動く |
+| デバイス更新 | デバイス情報更新（C3） | 更新が動く |
+| デバイス削除 | デバイス削除（C4） | 削除が動く |
+| センサー関連付け | デバイスとセンサーの関連付け（C5） | 割当／解除・デバイス別測定値閲覧 |
+| 設置場所検索 | 設置場所検索（B3） | 場所単独／種別／期間とのANDが動く |
 
-**推奨：** 途中でやめられる境界を明確にするため、1つのMilestoneはできるだけ1つの動作完成段階に対応させる。期限は未定のままでよい。
+Milestoneは作業を閉じた数で進捗を表す。**Issueを閉じただけでは完了としない**。その段階のHTTP・DB・画面と回帰テストの結果を確認してから達成判定する。残り時間は不明なので期限は空欄でよい。
 
-## PRテンプレートへの追記案（追加課題のPRのみ）
+## PR記録項目
 
-```markdown
-- 対応Task：B1 など
-- 動作確認：API / Oracle / Webのうち該当する項目
-- JUnit実行結果：
-- 既存API・画面の回帰確認：
-- 完成Milestone：
-```
+- 対応TaskとMilestone
+- 主なソース・API・SQL変更
+- JUnit／Mockito／Quarkus試験結果
+- 実Oracle・ブラウザでの結果
+- 既存一覧・MQTT登録の回帰結果
 
-## 起票のタイミング
-
-現在：Issue原稿と見積もりを保管。現行版完成後：設計を再点検。追加課題の実施範囲決定後：必要なIssueだけ起票してMilestoneへ登録し、担当を割り当てる。
+**注意：** 追加の設計書やIssueがGitHub上に存在していても、機能実装済みとはみなさない。現行版の完成タグには、追加課題の準備資料を含めない。

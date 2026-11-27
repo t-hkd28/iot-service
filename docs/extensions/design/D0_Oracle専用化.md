@@ -1,5 +1,7 @@
 # D0：Oracle専用化（CSVコードは保持）
 
+> **作業名の確認：** [タスク早見表](../タスク早見表.md)（D0・B1・A1などの記号と担当機能の対応）
+
 ## 目的
 
 現行アプリのCSV/JDBC切替を廃止し、Oracle専用で動作させる。**`CsvSensorDataRepository.java`そのものは削除しない**。現行v1.0のタグを取得してから着手する。
@@ -9,8 +11,8 @@
 | ファイル | 変更内容 |
 |---|---|
 | `repository/RepositoryProducer.java` | `StorageType`とCSVパスの設定注入を外し、`JdbcSensorDataRepository`だけを`@Produces`で提供する。`Instance<DataSource>`または`DataSource`を注入する既存方法を尊重。 |
-| `config/StorageType.java` | **削除・機能変更しない**。旧版確認用としてコードを残す。 |
-| `repository/CsvSensorDataRepository.java` | **削除・機能変更しない**。旧版確認用としてコードを残す。 |
+| `config/StorageType.java` | **削除・機能変更しない**。参考用としてコードを残す。 |
+| `repository/CsvSensorDataRepository.java` | **削除・機能変更しない**。参考用としてコードを残す。 |
 | `application.properties` | `app.csv.path`を廃止。OracleのDataSource設定は維持。 |
 | `docs`、`README` | 追加版の稼働条件を「Oracle必須」に更新（現行文書の確定版は後で改訂）。 |
 | `src/test/...` | CSV切替を前提としたProducerテストをJDBC注入の検証へ変更。実DB接続不要なテスト用設定を準備。 |
@@ -18,7 +20,7 @@
 ## 実装上のポイント
 
 - インターフェース`SensorDataRepository`を維持する。ServiceやResourceをJDBC直接呼び出しにしない。
-- DB側には既存の`SENSOR_DATA`テーブルを使用。D0でテーブル変更しない。
+- DB側には既存の`SENSOR_DATA`テーブルを使用。Oracle専用化（D0）でテーブル変更しない。
 - `app.mqtt.enabled=false`で起動し、OracleからのREST取得と画面一覧表示を確認。その後MQTTを有効にして保存まで確認。
 
 ## 完成条件
