@@ -9,9 +9,9 @@
 | ファイル | 変更内容 |
 |---|---|
 | `repository/RepositoryProducer.java` | `StorageType`とCSVパスの設定注入を外し、`JdbcSensorDataRepository`だけを`@Produces`で提供する。`Instance<DataSource>`または`DataSource`を注入する既存方法を尊重。 |
-| `config/StorageType.java` | 参照がなくなれば削除可能（残す場合も未使用を明記）。 |
+| `config/StorageType.java` | **削除・機能変更しない**。旧版確認用としてコードを残す。 |
 | `repository/CsvSensorDataRepository.java` | **削除・機能変更しない**。旧版確認用としてコードを残す。 |
-| `application.properties` | `app.storage.type`と`app.csv.path`を廃止。OracleのDataSource設定は維持。 |
+| `application.properties` | `app.csv.path`を廃止。OracleのDataSource設定は維持。 |
 | `docs`、`README` | 追加版の稼働条件を「Oracle必須」に更新（現行文書の確定版は後で改訂）。 |
 | `src/test/...` | CSV切替を前提としたProducerテストをJDBC注入の検証へ変更。実DB接続不要なテスト用設定を準備。 |
 

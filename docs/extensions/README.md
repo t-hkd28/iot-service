@@ -27,13 +27,3 @@
 | [テスト一覧](tests/README.md) | 共通テスト方針、段階別試験と全体の回帰確認 |
 | [Issue一覧](issues/README.md) | 個別Issue原稿、見積工数、依存関係 |
 | [GitHub運用](github/準備ブランチ・Milestone・PR運用.md) | 現行開発と切り離した設計準備とマージ時期 |
-
-## 参照した現行コード
-
-- `iot-service-complete(1).zip`：完成版のJava、SQL、Webソース。
-- `iot-service_2026112002.zip`：ベース版の設計書・テスト仕様・README。
-- **注意**：実際の現行開発は進行中。`v1.0`タグ作成後、完成時点のクラス・メソッド・テスト構成と照合して設計書を再点検すること。特にCDIテストの最新変更内容は、最終的な`master`を優先する。
-
-## GitHub配置
-
-この資料セットは`docs/extensions/`以下のみで構成される。現行`master`に直接反映せず、教員用`docs/extension-planning`ブランチへ配置する。完成タグ作成後にPRをマージする。

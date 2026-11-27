@@ -18,7 +18,7 @@
 - B1：`sensorType`のみ。従来の`limit`との併用。
 - B2：`sensorId`追加。`sensorType`とIDのAND検索もB2で完成。
 - B3：`from`・`to`追加。単独の日時検索を完成。既存の2条件は引き続き利用可。
-- B4：種別・ID・日時のすべてを任意に組み合わせるAND検索を完成。JavaScript画面に全条件を設ける。
+- B4：種別・ID・日時のすべてを任意に組み合わせるAND検索を完成。
 
 例：`/api/sensors?limit=50&sensorType=TEMPERATURE&sensorId=S-001&from=2026-11-01T00%3A00%3A00&to=2026-12-01T00%3A00%3A00`
 
@@ -32,31 +32,13 @@
 
 | ソース | 変更案 |
 |---|---|
-| `model/SensorDataFilter.java`（新規） | `sensorType`、`sensorId`、`from`、`to`、`limit`をまとめるrecordまたはクラス。B1時点は必要最小限の項目で開始し、各段階で追加。 |
+| `model/SensorDataFilter.java`（新規） | `sensorType`、`sensorId`、`from`、`to`、`limit`をまとめるrecord。B1時点は必要最小限の項目で開始し、各段階で追加。 |
 | `resource/SensorResource.java` | クエリパラメータの受取・単純な形式検証・Service呼出し。 |
 | `service/SensorDataService.java` | `search(filter)`を追加。既存`findAll(int)`を残し、旧APIの互換性を保つ。 |
 | `repository/SensorDataRepository.java` | `search(filter)`を追加。`findAll(int)`を残す。 |
 | `repository/JdbcSensorDataRepository.java` | `PreparedStatement`で条件付きSQLを実行。 |
 | `js/sensor-api.js` | `getSensors`を条件対応に拡張。`URLSearchParams`等でエンコードする。 |
 | `index.html`、`js/script.js` | 検索項目・入力検証・一覧更新。 |
-
-### SQL方針（完成時）
-
-```sql
-SELECT SENSOR_ID, SENSOR_TYPE, SENSOR_VALUE, UNIT, MEASURED_AT
-FROM (
-    SELECT ID, SENSOR_ID, SENSOR_TYPE, SENSOR_VALUE, UNIT, MEASURED_AT
-    FROM SENSOR_DATA
-    WHERE (? IS NULL OR SENSOR_TYPE = ?)
-      AND (? IS NULL OR SENSOR_ID = ?)
-      AND (? IS NULL OR MEASURED_AT >= ?)
-      AND (? IS NULL OR MEASURED_AT < ?)
-    ORDER BY MEASURED_AT DESC, ID DESC
-)
-WHERE ROWNUM <= ?
-```
-
-※これは説明用SQL。Oracle JDBCのNULLパラメータ型指定が難しければ、**指定された条件だけWHERE句を組み立て**、値は必ず`?`に設定する方式を推奨。SQL文字列へ画面入力値を直接連結しない。
 
 ## 完成ゲート
 
